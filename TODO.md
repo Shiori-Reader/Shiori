@@ -1,0 +1,12 @@
+- [] 3-5 page buffering
+- [] auto chapter release notification
+- [] resume from page
+- [] better caching
+- [] actual logging that isn't System.out.println();
+- [] recent mangas (ties with resume from page)
+- [] JavaFX?
+- [] tests for Maven
+- [] package for community versions
+- [] other Manga APIs?
+- [] the views that a manga has, the ratings, the anime ratings of said manga (like in shuhei's manga plus)
+- [] website
