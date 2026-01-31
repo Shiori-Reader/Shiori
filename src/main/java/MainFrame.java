@@ -13,8 +13,9 @@ public class MainFrame extends JFrame {
 
     private final MangaDexClient api = new MangaDexClient();
     private final ReaderPanel reader = new ReaderPanel();
+    private Manga currentManga;
     private final ChapterListPanel chapterList =
-            new ChapterListPanel(chapter -> reader.loadChapter(api, chapter));
+            new ChapterListPanel(chapter -> reader.loadChapter(api, chapter, currentManga));
 
     public MainFrame() {
         super("Shiori");
@@ -31,6 +32,7 @@ public class MainFrame extends JFrame {
         JTabbedPane tabs = new JTabbedPane();
         tabs.add("Manga", mangaList);
         tabs.add("Chapters", chapterList);
+        tabs.add("Bookmarks", bookmarksPanel);
 
         JSplitPane split = new JSplitPane(
                 JSplitPane.HORIZONTAL_SPLIT,
@@ -71,7 +73,17 @@ public class MainFrame extends JFrame {
         advancedMenu.add(clearCacheItem);
         menuBar.add(advancedMenu);
 
+        JMenu mangaMenu = new JMenu("Manga");
+        JMenuItem bookmarksItem = new JMenuItem("Bookmarks");
+        bookmarksItem.addActionListener(e -> {addBookmark();});
+        mangaMenu.add(bookmarksItem);
+        menuBar.add(mangaMenu);
+
         setJMenuBar(menuBar);
+    }
+
+    private void addBookmark() {
+        String mangaId = currentManga.id();
     }
 
     private void showAbout() {

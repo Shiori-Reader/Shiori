@@ -1,5 +1,6 @@
 import api.CacheManager;
 import api.MangaDexClient;
+import model.Bookmark;
 import model.Chapter;
 
 import javax.swing.*;
@@ -23,6 +24,11 @@ public class ReaderPanel extends JPanel {
     private SwingWorker<Void, ImageIcon> currentWorker;
     private double zoomFactor = 1.0;
     private final Timer zoomTimer;
+    private model.Chapter currentChapter;
+    private model.Manga currentManga;
+    private bookmark.BookmarkStore bookmarkStore;
+
+
 
     public ReaderPanel() {
         setLayout(new BorderLayout());
@@ -66,6 +72,10 @@ public class ReaderPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    public void setBookmarkStore(bookmark.BookmarkStore store) {
+        this.bookmarkStore = store;
+    }
+
     public void clearPages() {
         if (currentWorker != null) currentWorker.cancel(true);
 
@@ -74,7 +84,33 @@ public class ReaderPanel extends JPanel {
         pagesPanel.repaint();
     }
 
-    public void loadChapter(MangaDexClient api, Chapter chapter) {
+    public void addBookmark() {
+        if (bookmarkStore != null) {
+            JOptionPane.showMessageDialog(this, "Bookmark system not initialised!", "Fault", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (currentManga == null) {
+            JOptionPane.showMessageDialog(this, "Nothing to bookmark yet.", "Fault", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Bookmark bookmark = new Bookmark(
+                currentManga.id(),
+                currentManga.title(),
+                currentChapter.id(),
+                currentChapter.title(),
+                0,
+                System.currentTimeMillis()
+        );
+
+        bookmarkStore.add(bookmark);
+        JOptionPane.showMessageDialog(this, "Bookmark successfully added!", "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void loadChapter(MangaDexClient api, Chapter chapter, model.Manga manga) {
+        this.currentManga = manga;
+        this.currentChapter = chapter;
         clearPages();
         scrollToTop();
         statusLabel.setText("Loading chapter: " + chapter.title() + "...");
@@ -85,7 +121,6 @@ public class ReaderPanel extends JPanel {
                 List<String> pageUrls = api.getPageUrls(chapter.id());
                 int total = pageUrls.size();
                 int current = 0;
-
                 for (String url : pageUrls) {
                     if (isCancelled()) break;
 
@@ -115,6 +150,7 @@ public class ReaderPanel extends JPanel {
                 }
                 return null;
             }
+
 
             @Override
             protected void process(List<ImageIcon> icons) {
