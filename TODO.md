@@ -1,4 +1,5 @@
 - [x] 3-5 page buffering (just cache)
+- [x] bookmarks
 - [] auto chapter release notification
 - [] resume from page
 - [] better caching
