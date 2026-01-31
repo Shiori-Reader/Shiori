@@ -88,7 +88,7 @@ public class MainFrame extends JFrame {
         menuBar.add(advancedMenu);
 
         JMenu mangaMenu = new JMenu("Manga");
-        JMenuItem bookmarksItem = new JMenuItem("Bookmarks");
+        JMenuItem bookmarksItem = new JMenuItem("Add Bookmark");
         bookmarksItem.addActionListener(e -> {addBookmark();});
         mangaMenu.add(bookmarksItem);
         menuBar.add(mangaMenu);
