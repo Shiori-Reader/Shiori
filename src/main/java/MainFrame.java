@@ -126,6 +126,16 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1200, 800);
         setLocationRelativeTo(null);
+
+        // Add window listener to clean up resources on exit
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (discordCore != null) {
+                    discordCore.close();
+                }
+            }
+        });
         ImageIcon icon;
         java.net.URL imgURL = MainFrame.class.getResource("/logo-trans.png");
         if (imgURL != null) {

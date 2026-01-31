@@ -16,7 +16,9 @@ public class CacheManager {
     public CacheManager() {
         File dir = new File(CACHE_DIR);
         if (!dir.exists()) {
-            dir.mkdirs();
+            if (!dir.mkdirs()) {
+                System.err.println("Failed to create cache directory: " + CACHE_DIR);
+            }
         }
     }
 
@@ -41,10 +43,15 @@ public class CacheManager {
         try {
             Path cachePath = Paths.get(CACHE_DIR);
             if (Files.exists(cachePath)) {
-                walk(cachePath)
-                        .sorted(Comparator.reverseOrder())
-                        .map(Path::toFile)
-                        .forEach(File::delete);
+                try (java.util.stream.Stream<Path> pathStream = walk(cachePath)) {
+                    pathStream.sorted(Comparator.reverseOrder())
+                            .map(Path::toFile)
+                            .forEach(file -> {
+                                if (!file.delete()) {
+                                    System.err.println("Failed to delete: " + file.getAbsolutePath());
+                                }
+                            });
+                }
                 Files.createDirectories(cachePath);
             }
         } catch (IOException e) {
