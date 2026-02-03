@@ -1,7 +1,7 @@
 # Shiori - Manga Reader Desktop Application
 [![Qodana](https://github.com/meowcat767/Shiori/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/meowcat767/Shiori/actions/workflows/qodana_code_quality.yml) [![CodeQL Advanced](https://github.com/meowcat767/Shiori/actions/workflows/codeql.yml/badge.svg)](https://github.com/meowcat767/Shiori/actions/workflows/codeql.yml)
 
-A simple desktop manga reader application powered by the MangaDex API. Built with Java 21 and Kotlin, featuring a clean Swing-based UI with caching, bookmarks, and keyboard navigation.
+A simple desktop manga reader application powered by the MangaDex API. Built with Java and Python, featuring a clean Swing-based UI with caching, bookmarks, and keyboard navigation.
 
 
 ## Features
