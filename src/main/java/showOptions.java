@@ -7,13 +7,16 @@ public class showOptions {
 
     }
 
+
     public static void initOptionsUI() {
         JFrame frame = new JFrame("Options");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new FlowLayout());
-        JLabel temptext = new JLabel("Nothing to see here!");
+        JCheckBox c1 = new JCheckBox("Tick this box?"); // TODO: MAKE THIS DO SOMETHING
         frame.pack();
         frame.setLocationRelativeTo(null); // this centers the window on spawn
         frame.setVisible(true);
     }
+
+
 }

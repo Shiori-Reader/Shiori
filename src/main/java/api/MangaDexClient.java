@@ -1,3 +1,9 @@
+/**
+ * NOTE: THIS REQUIRES PYTHON TO WORK AS IT SHOULD.
+ * THERE IS A FALLBACK, THOUGH THIS EDGE CASE HAS NEVER BEEN TESTED.
+ * update: it has been tested and it works, totally not my bad code or anything caused an "unexpected test"
+ * */
+
 package api;
 
 import com.fasterxml.jackson.databind.*;
