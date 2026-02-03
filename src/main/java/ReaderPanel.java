@@ -102,14 +102,14 @@ public class ReaderPanel extends JPanel {
     public void addBookmark() {
         logger.info("Attempting to add bookmark");
         if (bookmarkStore == null) {
-            logger.error("Bookmark system not initialized");
-            JOptionPane.showMessageDialog(this, "Bookmark system not initialised!", "Fault", JOptionPane.ERROR_MESSAGE);
+            logger.error("FAULT 01: Bookmark system not initialized");
+            JOptionPane.showMessageDialog(this, "Bookmark system not initialised!", "Fault 01", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (currentManga == null) {
-            logger.warn("No current manga to bookmark");
-            JOptionPane.showMessageDialog(this, "Nothing to bookmark yet.", "Fault", JOptionPane.ERROR_MESSAGE);
+            logger.warn("FAULT 02: No current manga to bookmark");
+            JOptionPane.showMessageDialog(this, "Nothing to bookmark yet.", "Fault 02", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
