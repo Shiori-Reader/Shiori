@@ -15,7 +15,6 @@ public class PDFLoader {
     public static List<BufferedImage> loadPDF(File file) throws IOException {
         List<BufferedImage> images = new ArrayList<>();
 
-        // Use Loader.loadPDF(...) for PDFBox 3.x
         try (PDDocument doc = Loader.loadPDF(file)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             int totalPages = doc.getNumberOfPages();
