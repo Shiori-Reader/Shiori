@@ -59,18 +59,27 @@ public class CacheManager {
     }
 
     public boolean isCached(String url) {
-        if(!isCachingEnabled()) {return false;}
+        // If caching is disabled (either via options or null options), return false
+        if (!isCachingEnabled()) {
+            return false;
+        }
         return getCachedFile(url).exists();
     }
 
-    public void saveToCache(String url, byte[] data) throws IOException {
-        if(!isCachingEnabled()) {return;}
-        Files.write(getCachedFile(url).toPath(), data);
+    public byte[] getFromCache(String url) throws IOException {
+        // If caching is disabled, return null to fetch fresh data
+        if (!isCachingEnabled()) {
+            return null;
+        }
+        return Files.readAllBytes(getCachedFile(url).toPath());
     }
 
-    public byte[] getFromCache(String url) throws IOException {
-        if(!isCachingEnabled()) {return null;}
-        return Files.readAllBytes(getCachedFile(url).toPath());
+    public void saveToCache(String url, byte[] data) throws IOException {
+        // If caching is disabled, skip saving
+        if (!isCachingEnabled()) {
+            return;
+        }
+        Files.write(getCachedFile(url).toPath(), data);
     }
 
     public void clearCache() {

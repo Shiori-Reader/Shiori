@@ -26,6 +26,7 @@ public class ReaderPanel extends JPanel {
     private final JPanel pagesPanel;
     private final JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
     private final CacheManager cacheManager = new CacheManager();
+    private final showOptions options = new showOptions();
     private SwingWorker<Void, ImageIcon> currentWorker;
     private double zoomFactor = 1.0;
     private final Timer zoomTimer;
@@ -42,6 +43,9 @@ public class ReaderPanel extends JPanel {
     private boolean isLoading = true;
 
     public ReaderPanel() {
+        // Initialize cache manager with options
+        cacheManager.setOptions(options);
+        
         setLayout(new BorderLayout());
 
         zoomTimer = new Timer(150, new ActionListener() {
