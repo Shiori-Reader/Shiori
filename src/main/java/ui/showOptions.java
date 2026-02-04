@@ -7,11 +7,13 @@ import java.util.prefs.Preferences;
 public class showOptions {
 
     private static final String KEY_CACHE = "cachingEnabled";
+    private static final String NSFW_CACHE = "nsfwEnabled";
 
     private final Preferences prefs =
             Preferences.userNodeForPackage(showOptions.class);
 
     private boolean iWantCaching;
+    private boolean iAmAGooner;
 
     public showOptions() {
         // Load persisted value (default = true)
@@ -28,10 +30,17 @@ public class showOptions {
         frame.setLayout(new FlowLayout());
 
         JCheckBox c1 = new JCheckBox("Enable Caching", iWantCaching);
+        JCheckBox c2 = new JCheckBox("Show NSFW/Hentai Content", iAmAGooner);
+
 
         c1.addActionListener(e -> {
             iWantCaching = c1.isSelected();
             prefs.putBoolean(KEY_CACHE, iWantCaching);
+        });
+
+        c2.addActionListener(e -> {
+            iAmAGooner = c2.isSelected();
+            prefs.putBoolean(KEY_CACHE, iAmAGooner);
         });
 
         frame.add(c1);
