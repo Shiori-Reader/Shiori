@@ -22,7 +22,7 @@ public class MangaDexClient {
     private static final String API = "https://api.mangadex.org";
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
-    
+
     // Jython interpreter and Python module
     private final PythonInterpreter interpreter;
     private final boolean pythonAvailable;
@@ -32,7 +32,7 @@ public class MangaDexClient {
         this.interpreter = new PythonInterpreter();
         this.pythonAvailable = initializePythonModule();
     }
-    
+
     /**
      * Initialize the Python interpreter and load the mangadex_api module.
      * @return true if Python module loaded successfully
@@ -43,17 +43,17 @@ public class MangaDexClient {
             interpreter.exec("import sys");
             logger.debug("Python module initialized");
 
-            
+
             // Get the resource path for the Python module
             String pythonPath = getPythonPath();
             if (!pythonPath.isEmpty()) {
                 interpreter.exec("sys.path.insert(0, '" + pythonPath + "')");
             }
-            
+
             // Import the mangadex_api module
             interpreter.exec("import mangadex_api");
             logger.debug("LOG-PYTHON: Attempted to import mangadex_api");
-            
+
             return true;
         } catch (Exception e) {
             System.err.println("Failed to initialize Python module: " + e.getMessage());
@@ -61,7 +61,7 @@ public class MangaDexClient {
             return false;
         }
     }
-    
+
     /**
      * Get the appropriate Python module path.
      * Handles both IDE and JAR execution modes.
@@ -73,13 +73,13 @@ public class MangaDexClient {
             logger.debug("yeah it exists");
             return pythonFile.getParentFile().getAbsolutePath();
         }
-        
+
         // Check if running from working directory
         File cwdFile = new File("src/main/resources/python/mangadex_api.py");
         if (cwdFile.exists()) {
             return cwdFile.getParentFile().getAbsolutePath();
         }
-        
+
         // Running from JAR - resources are in classpath at /python/
         // Return empty string, Jython will use classpath resources
         return "";
@@ -98,29 +98,47 @@ public class MangaDexClient {
     }
 
     /**
+     * Build content rating query parameter for NSFW content.
+     */
+    private String getContentRatingParams(boolean nsfwEnabled) {
+        if (nsfwEnabled) {
+            return "&contentRating[]=pornographic";
+        }
+        return "";
+    }
+
+    /**
      * Search manga using Python implementation if available, fallback to Java.
      */
     public List<Manga> searchManga(String title) throws Exception {
+        return searchManga(title, false);
+    }
+
+    /**
+     * Search manga with optional NSFW content rating.
+     */
+    public List<Manga> searchManga(String title, boolean nsfwEnabled) throws Exception {
         if (pythonAvailable) {
             try {
                 interpreter.set("title", title);
+                interpreter.set("nsfw_enabled", nsfwEnabled);
                 interpreter.exec(
-                    "results = mangadex_api.search_manga(title)\n" +
+                    "results = mangadex_api.search_manga(title, nsfw_enabled)\n" +
                     "import json\n" +
                     "results_json = json.dumps(results)"
                 );
-                
+
                 String jsonStr = interpreter.get("results_json").toString();
                 if (jsonStr != null && !jsonStr.isEmpty()) {
                     JsonNode root = mapper.readTree(jsonStr);
                     List<Manga> result = new ArrayList<>();
-                    
+
                     for (JsonNode node : root) {
                         String id = node.get("id").asText();
                         String mangaTitle = node.get("title").asText();
                         result.add(new Manga(id, mangaTitle));
                     }
-                    
+
                     if (!result.isEmpty()) {
                         return result;
                     }
@@ -129,11 +147,14 @@ public class MangaDexClient {
                 System.err.println("Python search failed, falling back to Java: " + e.getMessage());
             }
         }
-        
+
         // Fallback to Java implementation
         logger.debug("looks like java took control...");
         String url = API + "/manga?limit=20&title=" +
                 URLEncoder.encode(title, "UTF-8");
+
+        // Add content rating for NSFW
+        url += getContentRatingParams(nsfwEnabled);
 
         JsonNode root = get(url);
         List<Manga> result = new ArrayList<>();
@@ -163,7 +184,7 @@ public class MangaDexClient {
                     "import json\n" +
                     "result_json = json.dumps(result) if result else None"
                 );
-                
+
                 String jsonStr = interpreter.get("result_json").toString();
                 if (jsonStr != null && !jsonStr.isEmpty() && !jsonStr.equals("None")) {
                     JsonNode node = mapper.readTree(jsonStr);
@@ -175,7 +196,7 @@ public class MangaDexClient {
                 System.err.println("Python get_manga failed, falling back to Java: " + e.getMessage());
             }
         }
-        
+
         // Fallback to Java implementation
         String url = API + "/manga/" + mangaId;
 
@@ -196,27 +217,35 @@ public class MangaDexClient {
      * Get chapters for a manga using Python implementation if available.
      */
     public List<Chapter> getChapters(String mangaId) throws Exception {
+        return getChapters(mangaId, false);
+    }
+
+    /**
+     * Get chapters for a manga with optional NSFW content rating.
+     */
+    public List<Chapter> getChapters(String mangaId, boolean nsfwEnabled) throws Exception {
         if (pythonAvailable) {
             try {
                 interpreter.set("manga_id", mangaId);
+                interpreter.set("nsfw_enabled", nsfwEnabled);
                 interpreter.exec(
-                    "chapters = mangadex_api.get_chapters(manga_id)\n" +
+                    "chapters = mangadex_api.get_chapters(manga_id, nsfw_enabled)\n" +
                     "import json\n" +
                     "chapters_json = json.dumps(chapters)"
                 );
-                
+
                 String jsonStr = interpreter.get("chapters_json").toString();
                 if (jsonStr != null && !jsonStr.isEmpty()) {
                     JsonNode root = mapper.readTree(jsonStr);
                     List<Chapter> result = new ArrayList<>();
-                    
+
                     for (JsonNode node : root) {
                         String id = node.get("id").asText();
                         String chapterTitle = node.get("title").asText("");
                         String chapterNumber = node.get("number").asText("");
                         result.add(new Chapter(id, chapterTitle, chapterNumber));
                     }
-                    
+
                     if (!result.isEmpty()) {
                         return result;
                     }
@@ -225,11 +254,14 @@ public class MangaDexClient {
                 System.err.println("Python get_chapters failed, falling back to Java: " + e.getMessage());
             }
         }
-        
+
         // Fallback to Java implementation
         String url = API + "/chapter?manga=" + mangaId +
                 "&translatedLanguage[]=en" +
                 "&order[chapter]=asc";
+
+        // Add content rating for NSFW
+        url += getContentRatingParams(nsfwEnabled);
 
         JsonNode root = get(url);
         List<Chapter> chapters = new ArrayList<>();
@@ -258,16 +290,16 @@ public class MangaDexClient {
                     "import json\n" +
                     "page_urls_json = json.dumps(page_urls)"
                 );
-                
+
                 String jsonStr = interpreter.get("page_urls_json").toString();
                 if (jsonStr != null && !jsonStr.isEmpty()) {
                     JsonNode root = mapper.readTree(jsonStr);
                     List<String> urls = new ArrayList<>();
-                    
+
                     for (JsonNode node : root) {
                         urls.add(node.asText());
                     }
-                    
+
                     if (!urls.isEmpty()) {
                         return urls;
                     }
@@ -276,7 +308,7 @@ public class MangaDexClient {
                 System.err.println("Python get_page_urls failed, falling back to Java: " + e.getMessage());
             }
         }
-        
+
         // Fallback to Java implementation
         JsonNode root = get(API + "/at-home/server/" + chapterId);
 
@@ -302,7 +334,7 @@ public class MangaDexClient {
                     "import json\n" +
                     "stats_json = json.dumps(stats) if stats else None"
                 );
-                
+
                 String jsonStr = interpreter.get("stats_json").toString();
                 if (jsonStr != null && !jsonStr.isEmpty() && !jsonStr.equals("None")) {
                     return mapper.readTree(jsonStr);
@@ -311,7 +343,7 @@ public class MangaDexClient {
                 System.err.println("Python get_manga_stats failed, falling back to Java: " + e.getMessage());
             }
         }
-        
+
         // Fallback to Java implementation
         String url = API + "/statistics/manga/" + mangaId;
         JsonNode root = get(url);

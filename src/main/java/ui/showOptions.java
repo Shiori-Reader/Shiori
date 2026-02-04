@@ -16,8 +16,9 @@ public class showOptions {
     private boolean iAmAGooner;
 
     public showOptions() {
-        // Load persisted value (default = true)
+        // Load persisted values
         iWantCaching = prefs.getBoolean(KEY_CACHE, true);
+        iAmAGooner = prefs.getBoolean(NSFW_CACHE, false);
     }
 
     public void showOptions() {
@@ -40,7 +41,7 @@ public class showOptions {
 
         c2.addActionListener(e -> {
             iAmAGooner = c2.isSelected();
-            prefs.putBoolean(KEY_CACHE, iAmAGooner);
+            prefs.putBoolean(NSFW_CACHE, iAmAGooner);
         });
 
         frame.add(c1);
@@ -51,5 +52,9 @@ public class showOptions {
 
     public boolean isCachingEnabled() {
         return iWantCaching;
+    }
+
+    public boolean isNsfwEnabled() {
+        return iAmAGooner;
     }
 }
