@@ -68,7 +68,6 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         super("Shiori");
         SplashScreen splash = new SplashScreen();
-        SwingUtilities.invokeLater(() -> splash.show());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1200, 800);
         setLocationRelativeTo(null);
@@ -149,6 +148,15 @@ public class MainFrame extends JFrame {
         );
         split.setDividerLocation(350);
         add(split);
+
+        if (BuildInfo.isPreview()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "This is a preview build. Expect bugs",
+                    "Preview Build Warning",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
 
         setupZoomKeys();
 
