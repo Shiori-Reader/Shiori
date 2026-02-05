@@ -114,7 +114,8 @@ def get_manga(manga_id):
         root = _make_request(url)
         data = root.get("data", {})
 
-        manga_id = data.get("id")
+        # Fix variable shadowing - use different variable name
+        fetched_id = data.get("id")
         titles = data.get("attributes", {}).get("title", {})
 
         # Prefer English title, fall back to first available
@@ -123,9 +124,9 @@ def get_manga(manga_id):
             # Convert dict_values to list for Jython compatibility
             name = list(titles.values())[0]
 
-        if manga_id and name:
+        if fetched_id and name:
             return {
-                "id": manga_id,
+                "id": fetched_id,
                 "title": name
             }
     except Exception as e:

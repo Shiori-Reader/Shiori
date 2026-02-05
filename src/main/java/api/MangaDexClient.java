@@ -119,6 +119,16 @@ public class MangaDexClient {
     public List<Manga> searchManga(String title, boolean nsfwEnabled) throws Exception {
         if (pythonAvailable) {
             try {
+                // Set parameters for Python call
+                interpreter.set("title", title);
+                interpreter.set("nsfw_enabled", nsfwEnabled);
+
+                // Execute Python function and capture result
+                interpreter.exec(
+                    "results = mangadex_api.search_manga(title, nsfw_enabled)\n" +
+                    "import json\n" +
+                    "results_json = json.dumps(results) if results else None"
+                );
 
                 String jsonStr = interpreter.get("results_json").toString();
                 if (jsonStr != null && !jsonStr.isEmpty()) {
@@ -228,6 +238,16 @@ public class MangaDexClient {
     public List<Chapter> getChapters(String mangaId, boolean nsfwEnabled) throws Exception {
         if (pythonAvailable) {
             try {
+                // Set parameters for Python call
+                interpreter.set("manga_id", mangaId);
+                interpreter.set("nsfw_enabled", nsfwEnabled);
+
+                // Execute Python function and capture result
+                interpreter.exec(
+                    "chapters = mangadex_api.get_chapters(manga_id, nsfw_enabled)\n" +
+                    "import json\n" +
+                    "chapters_json = json.dumps(chapters) if chapters else None"
+                );
 
                 String jsonStr = interpreter.get("chapters_json").toString();
                 if (jsonStr != null && !jsonStr.isEmpty()) {
