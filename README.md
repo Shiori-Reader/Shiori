@@ -1,5 +1,5 @@
-# Shiori - Manga Reader Desktop Application
-[![Qodana](https://github.com/meowcat767/Shiori/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/meowcat767/Shiori/actions/workflows/qodana_code_quality.yml) [![CodeQL Advanced](https://github.com/meowcat767/Shiori/actions/workflows/codeql.yml/badge.svg)](https://github.com/meowcat767/Shiori/actions/workflows/codeql.yml)
+# Yomikumu - Manga Reader Desktop Application
+[![Qodana](https://github.com/meowcat767/Yomikumu/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/meowcat767/Yomikumu/actions/workflows/qodana_code_quality.yml) [![CodeQL Advanced](https://github.com/meowcat767/Yomikumu/actions/workflows/codeql.yml/badge.svg)](https://github.com/meowcat767/Yomikumu/actions/workflows/codeql.yml)
 
 A simple desktop manga reader application powered by the MangaDex API. Built with Java and Python, featuring a clean Swing-based UI with caching, bookmarks, and keyboard navigation.
 
@@ -26,8 +26,8 @@ A simple desktop manga reader application powered by the MangaDex API. Built wit
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/Shiori.git
-cd Shiori
+git clone https://github.com/yourusername/Yomikumu.git
+cd Yomikumu
 
 # Build the project
 mvn clean package
@@ -75,11 +75,11 @@ mvn exec:java
 
 - Click **Manga → Add Bookmark** to save your current reading position
 - View bookmarks in the "Bookmarks" tab
-- Bookmarks are stored in `~/.shiori/bookmarks.json`
+- Bookmarks are stored in `~/.Yomikumu/bookmarks.json`
 
 ### Cache Management
 
-- Images are cached in `~/.shiori/cache/`
+- Images are cached in `~/.Yomikumu/cache/`
 - Use **Advanced → Clear Cache** to clear cached images
 
 
@@ -116,10 +116,10 @@ void clearCache()
 
 ## Configuration
 
-Shiori stores configuration in the user's home directory:
+Yomikumu stores configuration in the user's home directory:
 
-- **Bookmarks**: `~/.shiori/bookmarks.json`
-- **Cache**: `~/.shiori/cache/`
+- **Bookmarks**: `~/.Yomikumu/bookmarks.json`
+- **Cache**: `~/.Yomikumu/cache/`
 
 ## Roadmap
 
